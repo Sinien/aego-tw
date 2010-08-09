@@ -28,6 +28,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javolution.text.TextBuilder;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -179,6 +181,7 @@ public final class RunnableStatsManager
 		}
 
 		private final Comparator<MethodStat>	comparator	= new Comparator<MethodStat>(){
+																@Override
 																public int compare(MethodStat o1, MethodStat o2)
 																{
 																	final Comparable c1 = getComparableValueOf(o1);
@@ -303,8 +306,8 @@ public final class RunnableStatsManager
 
 		for(int k = 0; k < methodStats.size(); k++)
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.append("\t<entry ");
+			TextBuilder tb = TextBuilder.newInstance();
+			tb.append("\t<entry ");
 
 			EnumSet<SortBy> set = EnumSet.allOf(SortBy.class);
 
@@ -314,16 +317,16 @@ public final class RunnableStatsManager
 				{
 					case NAME:
 					case METHOD:
-						appendAttribute(sb, SortBy.NAME, values[SortBy.NAME.ordinal()][k], maxLength[SortBy.NAME
+						appendAttribute(tb, SortBy.NAME, values[SortBy.NAME.ordinal()][k], maxLength[SortBy.NAME
 							.ordinal()]);
 						set.remove(SortBy.NAME);
 
-						appendAttribute(sb, SortBy.METHOD, values[SortBy.METHOD.ordinal()][k], maxLength[SortBy.METHOD
+						appendAttribute(tb, SortBy.METHOD, values[SortBy.METHOD.ordinal()][k], maxLength[SortBy.METHOD
 							.ordinal()]);
 						set.remove(SortBy.METHOD);
 						break;
 					default:
-						appendAttribute(sb, sortBy, values[sortBy.ordinal()][k], maxLength[sortBy.ordinal()]);
+						appendAttribute(tb, sortBy, values[sortBy.ordinal()][k], maxLength[sortBy.ordinal()]);
 						set.remove(sortBy);
 						break;
 				}
@@ -331,11 +334,12 @@ public final class RunnableStatsManager
 
 			for(SortBy sort : SortBy.VALUES)
 				if(set.contains(sort))
-					appendAttribute(sb, sort, values[sort.ordinal()][k], maxLength[sort.ordinal()]);
+					appendAttribute(tb, sort, values[sort.ordinal()][k], maxLength[sort.ordinal()]);
 
-			sb.append("/>");
+			tb.append("/>");
 
-			lines.add(sb.toString());
+			lines.add(tb.toString());
+			TextBuilder.recycle(tb);
 		}
 
 		lines.add("</entries>");
@@ -358,21 +362,21 @@ public final class RunnableStatsManager
 		}
 	}
 
-	private static void appendAttribute(StringBuilder sb, SortBy sortBy, String value, int fillTo)
+	private static void appendAttribute(TextBuilder tb, SortBy sortBy, String value, int fillTo)
 	{
-		sb.append(sortBy.xmlAttributeName);
-		sb.append("=");
+		tb.append(sortBy.xmlAttributeName);
+		tb.append("=");
 
 		if(sortBy != SortBy.NAME && sortBy != SortBy.METHOD)
 			for(int i = value.length(); i < fillTo; i++)
-				sb.append(" ");
+				tb.append(" ");
 
-		sb.append("\"");
-		sb.append(value);
-		sb.append("\" ");
+		tb.append("\"");
+		tb.append(value);
+		tb.append("\" ");
 
 		if(sortBy == SortBy.NAME || sortBy == SortBy.METHOD)
 			for(int i = value.length(); i < fillTo; i++)
-				sb.append(" ");
+				tb.append(" ");
 	}
 }
