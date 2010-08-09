@@ -56,12 +56,13 @@ import com.aionemu.gameserver.services.SiegeService;
 import com.aionemu.gameserver.services.WeatherService;
 import com.aionemu.gameserver.services.ZoneService;
 import com.aionemu.gameserver.spawnengine.SpawnEngine;
+import com.aionemu.gameserver.taskmanager.TaskManagerFromDB;
 import com.aionemu.gameserver.taskmanager.tasks.PacketBroadcaster;
-import com.aionemu.gameserver.utils.VersionningService;
 import com.aionemu.gameserver.utils.DeadlockDetector;
 import com.aionemu.gameserver.utils.ThreadPoolManager;
 import com.aionemu.gameserver.utils.ThreadUncaughtExceptionHandler;
 import com.aionemu.gameserver.utils.Util;
+import com.aionemu.gameserver.utils.VersionningService;
 import com.aionemu.gameserver.utils.chathandlers.ChatHandlers;
 import com.aionemu.gameserver.utils.gametime.GameTimeManager;
 import com.aionemu.gameserver.utils.idfactory.IDFactory;
@@ -143,6 +144,8 @@ public class GameServer
 		PetitionService.getInstance();
 
 		ChatHandlers.getInstance();
+		
+		TaskManagerFromDB.getInstance();
 
 		Util.printSection("System");
 		VersionningService.printFullVersionInfo();
