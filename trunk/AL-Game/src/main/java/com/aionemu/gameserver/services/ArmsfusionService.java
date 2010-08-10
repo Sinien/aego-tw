@@ -18,12 +18,9 @@ package com.aionemu.gameserver.services;
 
 import org.apache.log4j.Logger;
 
-import com.aionemu.commons.database.dao.DAOManager;
-import com.aionemu.gameserver.dao.InventoryDAO;
 import com.aionemu.gameserver.model.gameobjects.Item;
 import com.aionemu.gameserver.model.gameobjects.Npc;
 import com.aionemu.gameserver.model.gameobjects.player.Player;
-import com.aionemu.gameserver.network.aion.serverpackets.SM_DELETE_ITEM;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_SYSTEM_MESSAGE;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_UPDATE_ITEM;
 import com.aionemu.gameserver.utils.PacketSendUtility;
@@ -84,11 +81,7 @@ public class ArmsfusionService
 		
 		firstItem.setFusionedItem(secondItem.getItemTemplate().getTemplateId());
 		
-		DAOManager.getDAO(InventoryDAO.class).store(firstItem, player.getObjectId());
-		
 		player.getInventory().removeFromBagByObjectId(secondItemUniqueId, 1);
-		
-		PacketSendUtility.sendPacket(player, new SM_DELETE_ITEM(secondItemUniqueId));
 		
 		PacketSendUtility.sendPacket(player, new SM_UPDATE_ITEM(firstItem));
 		
@@ -112,8 +105,6 @@ public class ArmsfusionService
 		}
 	
 		weaponToBreak.setFusionedItem(0);
-		
-		DAOManager.getDAO(InventoryDAO.class).store(weaponToBreak, player.getObjectId());
 		
 		PacketSendUtility.sendPacket(player, new SM_UPDATE_ITEM(weaponToBreak));
 		
